@@ -1,0 +1,32 @@
+#ifndef CBK_H
+#define CBK_H
+
+#define _POSIX_C_SOURCE 200809L
+
+#include <stdint.h>
+#include <wayland-client.h>
+#include "../protocolo/xdg-shell-client-protocol.h"
+#include <sys/mman.h>
+#include <sys/stat.h>
+
+
+extern const struct xdg_wm_base_listener wm_base_listener;
+extern const struct xdg_surface_listener xdg_surface_listener;
+extern const struct wl_registry_listener registry_listener;
+extern const struct xdg_toplevel_listener toplevel_listener;
+extern const struct wl_callback_listener frame_listener;
+
+void wm_base_ping(void *data, struct xdg_wm_base *wm_base, uint32_t serial);
+void registry_handler(void *data, struct wl_registry *registry, uint32_t id, const char *interface, uint32_t version);
+void xdg_surface_configure(void *data, struct xdg_surface *xdg_surface, uint32_t serial);
+void registry_remover(void *data, struct wl_registry *registry, uint32_t id);
+int  create_shm_buffer(void *data);
+void handle_toplevel_configure(void *data,  struct xdg_toplevel *xdg_toplevel,  int32_t width, int32_t height,  struct wl_array *states);
+void registry_global(void *data, struct wl_registry *registry, uint32_t name, const struct wl_interface *interface, uint32_t version);
+void frame_done(void *data, struct wl_callback *callback, uint32_t time);
+void buffer_release(void *data, struct wl_buffer *buffer);
+void handle_close(void *data, struct xdg_toplevel *xdg_toplevel);
+void attJanela(void *data);
+
+
+#endif
