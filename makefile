@@ -25,7 +25,8 @@ all: $(TARGET)
 
 # Linkagem final (com Wayland via pkg-config)
 $(TARGET): $(OBJ)
-	$(CC) $(OBJ) -o $@ $(shell pkg-config --libs wayland-client) -lvulkan
+##$(CC) $(OBJ) -o $@ $(shell pkg-config --libs wayland-client) -lvulkan
+		$(CC) $(OBJ) -o $@ $(shell pkg-config --libs wayland-client xkbcommon) -lvulkan
 
 # Regras de compilação
 %.o: %.c

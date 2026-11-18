@@ -6,8 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <sys/mman.h>
 #include "../../cenario/Cenario.h"
 #include "../../renderir/Render.h"
+
 
 const struct xdg_wm_base_listener wm_base_listener = {
     .ping = wm_base_ping,
@@ -35,6 +37,10 @@ const struct wl_callback_listener frame_listener = {
     .done = frame_done,
 };
 
+const struct wl_seat_listener seat_listener = {
+    .capabilities = seat_capabilities,
+};
+
 
 void wm_base_ping(void *data, struct xdg_wm_base *wm_base, uint32_t serial){
     xdg_wm_base_pong(wm_base, serial);
@@ -59,7 +65,12 @@ void registry_handler(void *data, struct wl_registry *registry, uint32_t id, con
 
     if (strcmp(interface, "wl_seat") == 0) {
         wayland->seat = wl_registry_bind(registry, id, &wl_seat_interface, 1);
+        if(wl_seat_add_listener(wayland->seat, &seat_listener, wayland) != 0){
+            printf("erro ao registrar o seat listener\n");
+        }
+        
 }
+
 
 };
 
@@ -230,7 +241,6 @@ int create_shm_buffer(void *data){
     janela->pixl = shm_data;
     janela->buffer = buffer;
 
-
     return 0;
 };
 
@@ -245,9 +255,8 @@ void handle_toplevel_configure(void *data,  struct xdg_toplevel *xdg_toplevel,  
     if (width > 0)
         nos->janela->novoWidth = width;
 
-    if (height > 0){
+    if (height > 0)
         nos->janela->novoHeight = height;
-}
 };
 
 void registry_global(void *data, struct wl_registry *registry, uint32_t name, const struct wl_interface *interface, uint32_t version){
@@ -293,7 +302,7 @@ void buffer_release(void *data, struct wl_buffer *buffer){
         if (resultado < 0)
             return;
     }
-    //padrao = ((janela->width / 4)*3) / 10;
+
     padrao = ((janela->novoHeight / 20));
     branco(janela);
 
@@ -347,5 +356,15 @@ void solicitarRedesenho(Janela *janela) {
     if (janela->buffer && janela->frame_pronto) {
         // desenharJanela(janela);
         attJanela(janela->nos);
+    }
+}
+
+
+ void seat_capabilities(void *data, struct wl_seat *seat, uint32_t capabilities) {
+    sWayland *wayland = data;
+
+    if ((capabilities & WL_SEAT_CAPABILITY_KEYBOARD) && !wayland->teclado.keyboard) {
+        wayland->teclado.keyboard = wl_seat_get_keyboard(seat);
+        wl_keyboard_add_listener(wayland->teclado.keyboard, &keyboard_listener, &wayland->teclado);
     }
 }
