@@ -39,6 +39,7 @@ void gravidade(){
             if(posicao && !posicao->valido){
                 free(posicao);
             }
+        
         }
         delListaPosicao(peca);
         peca = new_Peca();
@@ -48,6 +49,7 @@ void gravidade(){
         return;
     }
 
+    
     for(int i=0;i<peca->length;i++){
         if(peca->posicoes[i]){
             peca->posicoes[i]->y++;

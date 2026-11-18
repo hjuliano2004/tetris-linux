@@ -122,7 +122,7 @@ ListaPosicao *new_Peca(){
             
     }
     
-    free(modelo_peca);//talvez seja necessário salvar o modelo de peça, por enquanto apenas apaga o modelo
+    free(modelo_peca);//talvez seja necessário salvar o modelo de peça futuramente, por enquanto apenas apaga o modelo
 
     return lista;
 }
