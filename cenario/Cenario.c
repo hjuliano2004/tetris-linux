@@ -16,7 +16,7 @@ ListaPosicao *peca = NULL;
 
 
 void draw(uint32_t *pixel, int i,  Posicao *posicao){
-    if(!posicao->valido){return;}
+    if(!pixel || !posicao || !posicao->valido){return;}
 
     int left = posicao->x * padrao;
     int top = posicao->y * padrao;
@@ -27,12 +27,14 @@ void draw(uint32_t *pixel, int i,  Posicao *posicao){
     }
 }
 
-void drawList(uint32_t *pixel, int p){
+void drawList(uint32_t *pixel, int p, ListaPosicao *lista){
 
-    for(int i=0;i<peca->length;i++){
-        draw(pixel, p, peca->posicoes[i]);
+    if(!pixel || !lista || !lista->posicoes ||
+       lista->length <= 0 || lista->length > lista->size){return;}
+
+    for(int i=0;i<lista->length;i++){
+        draw(pixel, p, lista->posicoes[i]);
     }
-
 }
 
 void grade(Janela *janela, int i){
@@ -41,8 +43,6 @@ void grade(Janela *janela, int i){
     if((y % padrao == 0 || x % padrao == 0)){
         pixel[i] = BLACK;
     }
-    
-
 }
 
 
@@ -109,6 +109,14 @@ ListaPosicao *new_Peca(){
             int coluna = i % 3;
             int linha = i / 3;
             Posicao *p = new_Posicao(5 + coluna, linha);
+            if(!p){
+                for(int j=0;j<lista->length;j++){
+                    free(lista->posicoes[j]);
+                }
+                delListaPosicao(lista);
+                free(modelo_peca);
+                return NULL;
+            }
             p->valido = modelo_peca[i];
             addPosicao(lista, p);
             
@@ -134,3 +142,37 @@ ListaPosicao *addPosicao(ListaPosicao *lista, Posicao *posicao){
 
     return lista;
 };
+
+ListaPosicao *addPeca(ListaPosicao *peca, ListaPosicao *lista){//adiciona uma peça a uma lista
+    if(!peca){
+        printf("não é possivel adicionar peça nula\n");
+        return NULL;
+    }
+
+    if(!lista){
+        printf("não é possivel adicionar peça em uma lista nula\n");
+        return NULL;
+    }
+
+    int quantidade = 0;
+    for(int i=0;i<peca->length;i++){
+        if(peca->posicoes[i] && peca->posicoes[i]->valido){
+            quantidade++;
+        }
+    }
+
+    if(lista->length + quantidade > lista->size){
+        printf("\nlista muito cheia, não é possivel adicionar mais uma peça\n");
+        return NULL;
+    }
+
+    for(int i=0;i<peca->length;i++){
+        if(peca->posicoes[i] && peca->posicoes[i]->valido){
+            lista->posicoes[lista->length] = peca->posicoes[i];
+            lista->length++;
+        }
+    }
+
+    return lista;
+
+}

@@ -12,16 +12,12 @@ void branco(Janela *janela){
         y = i / janela->width;
 
         pixel[i] = GRAY;
-        drawList(pixel, i);
+        drawList(pixel, i, peca);
+        drawList(pixel, i, torre);
 
-        if(x == (janela->width/4)*3){
-            pixel[i] = BLACK;
-        }
-        if(x < (janela->width/4)*3){
+        if(x <= padrao*10){
             grade(janela, i);
         }
-
-
 
     }
 

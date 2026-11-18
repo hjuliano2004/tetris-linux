@@ -293,7 +293,8 @@ void buffer_release(void *data, struct wl_buffer *buffer){
         if (resultado < 0)
             return;
     }
-    padrao = ((janela->width / 4)*3) / 10;
+    //padrao = ((janela->width / 4)*3) / 10;
+    padrao = ((janela->novoHeight / 20));
     branco(janela);
 
     if (janela->frame_pronto && janela->redraw_requested){
