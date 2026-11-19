@@ -2,17 +2,13 @@
 #include "janela/wayland/cbk.h"
 #include "cenario/Cenario.h"
 #include "renderir/Render.h"
-//#include "cenario/modelos/Modelos.h"
 #include <stdlib.h>
 #include <time.h>
 #include "tempo/Setts.h"
-//#include <stdio.h>
 #include <stddef.h>
 
 int tamanho = 15;
 int QA= 10 * 20;//quantidade de quandrados em tela(quantidade calculada manualmente)
-
-
 
 
 int main(){
@@ -34,7 +30,7 @@ int main(){
 
     branco(janela);
 
-    setInterval(gravidade, janela, 0.5);
+    SetTimer *timer = setInterval(gravidade, 0, 0.5);
 
     while(janela->aberto){
         wl_display_dispatch(wayland->display);
@@ -45,6 +41,8 @@ int main(){
         }
 
         switch (action){
+        case ACTION_NONE:
+            break;
         case ACTION_MOVE_RIGHT:
             direita();
             break;
@@ -52,7 +50,10 @@ int main(){
             esquerda();
             break;
         case ACTION_FAST:
-
+            rapido(timer);
+            break;
+        case ACTION_NORMAL:
+            vNormal(timer);
             break;
         case ACTION_ROTATE:
             rotacao();

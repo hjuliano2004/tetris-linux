@@ -18,6 +18,7 @@ typedef enum {
     ACTION_MOVE_RIGHT,
     ACTION_ROTATE,
     ACTION_FAST,
+    ACTION_NORMAL,
     OUT
 } Action;
 

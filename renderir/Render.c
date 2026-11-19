@@ -3,6 +3,7 @@
 #include "../cenario/Cenario.h"
 #include "../janela/teclado/Teclado.h"
 #include <stdlib.h>
+#include "../tempo/Setts.h"
 
 void branco(Janela *janela){
     if (!janela || !janela->pixl){return;}
@@ -22,7 +23,6 @@ void branco(Janela *janela){
         }
 
     }
-
 }
 
 
@@ -107,6 +107,26 @@ void esquerda(){
 
     action = ACTION_NONE;
 }
+
+
+void vNormal(SetTimer *time){
+    printf("normal executado\n");
+        clearInterval(time);
+
+        time = setInterval(gravidade, 0, 0.5);
+    
+        action = ACTION_NONE;
+    }
+
+
+void rapido(SetTimer *time){
+    printf("rapido executado\n");
+        clearInterval(time);
+
+        time = setInterval(gravidade, 0, 0.1);
+        gravidade();
+        action = ACTION_NONE;
+    }
 
 void rotacao(){
 

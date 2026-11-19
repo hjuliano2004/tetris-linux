@@ -36,21 +36,21 @@ void keyboard_keymap(void *data, struct wl_keyboard *keyboard, uint32_t format, 
 void keyboard_key(void *data, struct wl_keyboard *keyboard, uint32_t serial, uint32_t time, uint32_t key, uint32_t state_w){
     struct keyboard_state *state_ptr = data;
 
-    if (state_w != WL_KEYBOARD_KEY_STATE_PRESSED)
-        return;
-
     xkb_keycode_t code = key + 8;
-
 
     xkb_keysym_t sym = xkb_state_key_get_one_sym(state_ptr->xkb_state, code);
 
-
-    
     char name[128];
     xkb_keysym_get_name(sym, name, sizeof(name));//metodo pra transformar enumaração de teclas em char
+
+    if(state_w == WL_KEYBOARD_KEY_STATE_RELEASED && sym == XKB_KEY_Down){
+        action = ACTION_NORMAL;
+    }
+
+
+    if (state_w == WL_KEYBOARD_KEY_STATE_PRESSED){
+    
     printf("sym = %s\n", name);
-
-
     switch (sym) {
 
         case XKB_KEY_Left:
@@ -64,14 +64,18 @@ void keyboard_key(void *data, struct wl_keyboard *keyboard, uint32_t serial, uin
         case XKB_KEY_space:
             action = ACTION_ROTATE;
             break;
+        case XKB_KEY_Down:
+            action = ACTION_FAST;
+            break;
         case XKB_KEY_Escape:
         action = OUT;
             break;
 
         default:
-            action = ACTION_NONE;
+        action = ACTION_NONE;
+            break;
     }
-    
+}
 
 }
 
