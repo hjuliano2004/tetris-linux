@@ -6,5 +6,5 @@ void branco(Janela *janela);
 void gravidade();
 void esquerda();
 void direita();
-
+void rotacao();
 #endif

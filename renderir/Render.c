@@ -107,3 +107,23 @@ void esquerda(){
 
     action = ACTION_NONE;
 }
+
+void rotacao(){
+
+    if(!peca || !peca->posicoes){
+        printf("não é possivel girar peça nula\n");
+        return;
+    }
+
+    int p[9];
+
+    p[0] = peca->posicoes[6]->valido;   p[1] = peca->posicoes[3]->valido;   p[2] = peca->posicoes[0]->valido;
+    p[3] = peca->posicoes[7]->valido;   p[4] = peca->posicoes[4]->valido;   p[5] = peca->posicoes[1]->valido;
+    p[6] = peca->posicoes[8]->valido;   p[7] = peca->posicoes[5]->valido;   p[8] = peca->posicoes[2]->valido;
+
+    for(int i=0;i<9;i++){
+       peca->posicoes[i]->valido = p[i];
+    }
+
+    action = ACTION_NONE;
+}

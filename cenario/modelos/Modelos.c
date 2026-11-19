@@ -1,6 +1,7 @@
 #include "Modelos.h"
 #include <stdlib.h>
 #include <string.h>
+#include "../Cenario.h"
 
 #include <stdlib.h>
 
@@ -47,3 +48,4 @@ int *modelo(void){
     }
     return peca;
 }
+

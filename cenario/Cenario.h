@@ -1,6 +1,7 @@
 #ifndef CENARIO_H
 #define CENARIO_H
 #include <stdint.h>
+#include "../janela/Janela.h"
 
 extern int padrao;
 extern int x;

@@ -45,10 +45,10 @@ void keyboard_key(void *data, struct wl_keyboard *keyboard, uint32_t serial, uin
     xkb_keysym_t sym = xkb_state_key_get_one_sym(state_ptr->xkb_state, code);
 
 
-    /*
+    
     char name[128];
     xkb_keysym_get_name(sym, name, sizeof(name));//metodo pra transformar enumaração de teclas em char
-    printf("sym = %s\n", name);*/
+    printf("sym = %s\n", name);
 
 
     switch (sym) {
@@ -61,7 +61,7 @@ void keyboard_key(void *data, struct wl_keyboard *keyboard, uint32_t serial, uin
             action = ACTION_MOVE_RIGHT;
             break;
 
-        case XKB_KEY_Up:
+        case XKB_KEY_space:
             action = ACTION_ROTATE;
             break;
         case XKB_KEY_Escape:

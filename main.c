@@ -13,6 +13,8 @@ int tamanho = 15;
 int QA= 10 * 20;//quantidade de quandrados em tela(quantidade calculada manualmente)
 
 
+
+
 int main(){
 
     /*primeiro abre a janela*/
@@ -51,6 +53,9 @@ int main(){
             break;
         case ACTION_FAST:
 
+            break;
+        case ACTION_ROTATE:
+            rotacao();
             break;
         case OUT:
             janela->aberto = false;
