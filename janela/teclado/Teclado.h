@@ -12,6 +12,17 @@ struct keyboard_state {
     struct xkb_state *xkb_state;
 };
 
+typedef enum {
+    ACTION_NONE,
+    ACTION_MOVE_LEFT,
+    ACTION_MOVE_RIGHT,
+    ACTION_ROTATE,
+    ACTION_FAST,
+    OUT
+} Action;
+
+extern Action action;
+
 extern const struct wl_keyboard_listener keyboard_listener;
 
 

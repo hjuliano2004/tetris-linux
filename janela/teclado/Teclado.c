@@ -15,7 +15,7 @@ const struct wl_keyboard_listener keyboard_listener = {
     .repeat_info = NULL
 };
 
-
+Action action = ACTION_NONE;
 
 
 void keyboard_keymap(void *data, struct wl_keyboard *keyboard, uint32_t format, int fd, uint32_t size){
@@ -41,13 +41,38 @@ void keyboard_key(void *data, struct wl_keyboard *keyboard, uint32_t serial, uin
 
     xkb_keycode_t code = key + 8;
 
-    char utf8[64];
 
-    int len = xkb_state_key_get_utf8(state_ptr->xkb_state, code, utf8, sizeof(utf8));
+    xkb_keysym_t sym = xkb_state_key_get_one_sym(state_ptr->xkb_state, code);
 
-    /*if (len > 0){
-        printf("texto: %s\n", utf8);
-    }*/
+
+    /*
+    char name[128];
+    xkb_keysym_get_name(sym, name, sizeof(name));//metodo pra transformar enumaração de teclas em char
+    printf("sym = %s\n", name);*/
+
+
+    switch (sym) {
+
+        case XKB_KEY_Left:
+            action = ACTION_MOVE_LEFT;
+            break;
+
+        case XKB_KEY_Right:
+            action = ACTION_MOVE_RIGHT;
+            break;
+
+        case XKB_KEY_Up:
+            action = ACTION_ROTATE;
+            break;
+        case XKB_KEY_Escape:
+        action = OUT;
+            break;
+
+        default:
+            action = ACTION_NONE;
+    }
+    
+
 }
 
 
