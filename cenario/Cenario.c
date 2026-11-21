@@ -5,6 +5,7 @@
 #include <stddef.h> 
 #include <stdio.h>
 #include "modelos/Modelos.h"
+#include <stdbool.h>
 
 
 int padrao = 50;
@@ -93,6 +94,10 @@ ListaPosicao *new_ListaPosicao(int numero){
 
 ListaPosicao *new_Peca(){
 
+    if(peca){
+        delListaPosicao(peca);
+    }
+
     int *modelo_peca = modelo();
     if(!modelo_peca){
         printf("não foi possivel reservar memoria para copiar o modelo da peça\n");
@@ -105,10 +110,9 @@ ListaPosicao *new_Peca(){
         return NULL;
     }
         for(int i=0;i<9;i++){
-
             int coluna = i % 3;
             int linha = i / 3;
-            Posicao *p = new_Posicao(5 + coluna, linha);
+            Posicao *p = new_Posicao(5 + coluna, linha - 3);
             if(!p){
                 for(int j=0;j<lista->length;j++){
                     free(lista->posicoes[j]);
@@ -119,7 +123,6 @@ ListaPosicao *new_Peca(){
             }
             p->valido = modelo_peca[i];
             addPosicao(lista, p);
-            
     }
     
     free(modelo_peca);//talvez seja necessário salvar o modelo de peça futuramente, por enquanto apenas apaga o modelo
@@ -174,5 +177,37 @@ ListaPosicao *addPeca(ListaPosicao *peca, ListaPosicao *lista){//adiciona uma pe
     }
 
     return lista;
+}
 
+
+
+
+
+
+bool removePosicao(Posicao *posicao, ListaPosicao *lista){
+    if (!posicao || !lista || !lista->posicoes || lista->length <= 0) {
+        return false;
+    }
+
+    for (int i = 0; i < lista->length; i++) {
+        if (!lista->posicoes[i]) {
+            continue;
+        }
+
+        if (lista->posicoes[i]->x == posicao->x &&
+            lista->posicoes[i]->y == posicao->y) {
+
+            delPosicao(lista->posicoes[i]);
+
+            for (int j = i; j < lista->length - 1; j++) {
+                lista->posicoes[j] = lista->posicoes[j + 1];
+            }
+
+            lista->length--;
+            lista->posicoes[lista->length] = NULL;
+            return true;
+        }
+    }
+
+    return false;
 }

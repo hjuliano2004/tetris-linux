@@ -12,5 +12,6 @@ void rapido(SetTimer *time);
 void vNormal(SetTimer *time);
 void destroiInvalido();
 void pilha();
+void linhaFechada();
 
 #endif

@@ -2,6 +2,7 @@
 #define CENARIO_H
 #include <stdint.h>
 #include "../janela/Janela.h"
+#include <stdbool.h>
 
 extern int padrao;
 extern int x;
@@ -34,5 +35,6 @@ ListaPosicao *delListaPosicao(ListaPosicao *lista);
 ListaPosicao *addPosicao(ListaPosicao *lista, Posicao *posicao);
 ListaPosicao *new_Peca();
 ListaPosicao *addPeca(ListaPosicao *peca, ListaPosicao *lista);
+bool removePosicao(Posicao *posicao, ListaPosicao *lista);
 
 #endif

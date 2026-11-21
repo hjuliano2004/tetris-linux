@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include "../tempo/Setts.h"
 #include <stdbool.h>
+#include "../cenario/Cenario.h"
 
 void branco(Janela *janela){
     if (!janela || !janela->pixl){return;}
@@ -38,8 +39,10 @@ void destroiInvalido(){//libera memoria dos quadrados transparentes da peça
 void pilha(){
     for(int i =0;i<9;i++){
         for(int j=0;j<torre->length;j++){
+
             if((peca->posicoes[i]->x == torre->posicoes[j]->x) && 
             (peca->posicoes[i]->y + 1 == torre->posicoes[j]->y) && peca->posicoes[i]->valido){
+
                 if(!addPeca(peca, torre)){
                     fprintf(stderr, "pilha: não foi possível guardar a peça na torre\n");
                 }
@@ -50,6 +53,9 @@ void pilha(){
                 if(!peca){
                     fprintf(stderr, "pilha: não foi possível criar nova peça\n");
                 }
+                linhaFechada();
+                return;
+
             }
         }
     }
@@ -76,11 +82,12 @@ void gravidade(){
         if (!addPeca(peca, torre)) {
             fprintf(stderr, "gravidade: não foi possível guardar a peça na torre\n");
             return;
+        }else{
+            linhaFechada();
         }
 
         destroiInvalido();
 
-        delListaPosicao(peca);
         peca = new_Peca();
         if (!peca) {
             fprintf(stderr, "gravidade: peça guardada, mas não foi possível criar a próxima\n");
@@ -113,7 +120,7 @@ static int colParede(int deslocamento){
     return 0;
 }
 
-static  bool colisao(int n){//verifica colisão da peça com as posições da torre
+static  bool colisao(int n){//verifica colisão da peça com as posições da torre horizontalmente
     for(int i=0;i<9;i++){
         for(int j=0;j<torre->length;j++){
             if((peca->posicoes[i]->x + n == torre->posicoes[j]->x)&&(peca->posicoes[i]->y == torre->posicoes[j]->y)
@@ -188,4 +195,79 @@ void rotacao(){
     }
 
     action = ACTION_NONE;
+}
+
+static void passar(int n)
+{
+    for (int i = torre->length - 1; i >= 0; i--) {
+        if (torre->posicoes[i] &&
+            torre->posicoes[i]->y == n) {
+            removePosicao(torre->posicoes[i], torre);
+        }
+    }
+}
+
+
+static bool colideEspera(Posicao **posicoes, int length){
+
+    for(int i=0;i<length;i++){
+        for(int j=0; j<torre->length;j++){
+            if(posicoes[i]->y + 1 == torre->posicoes[j]->y || posicoes[i]->y + 1 == 19){
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+
+
+void linhaFechada(void)
+{
+    if (!torre || !torre->posicoes || torre->length <= 0) {
+        return;
+    }
+
+    bool linhaRemovida[20] = { false };
+
+    int vertical[20] = { 0 };
+
+    for (int i = 0; i < torre->length; i++) {
+        Posicao *posicao = torre->posicoes[i];
+
+        if (posicao && posicao->y >= 0 && posicao->y < 20) {
+            vertical[posicao->y]++;
+        }
+    }
+
+    for (int y = 0; y < 20; y++) {
+        if (vertical[y] == 10) {
+            linhaRemovida[y] = true;
+        }
+    }
+
+    for (int y = 0; y < 20; y++) {
+        if (linhaRemovida[y]) {
+            passar(y);
+        }
+    }
+
+    for (int i = 0; i < torre->length; i++) {
+        Posicao *posicao = torre->posicoes[i];
+
+        if (!posicao) {
+            continue;
+        }
+
+        int linhasRemovidasAbaixo = 0;
+
+        for (int y = posicao->y + 1; y < 20; y++) {
+            if (linhaRemovida[y]) {
+                linhasRemovidasAbaixo++;
+            }
+        }
+
+        posicao->y += linhasRemovidasAbaixo;
+    }
 }
