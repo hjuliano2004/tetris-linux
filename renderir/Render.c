@@ -4,6 +4,7 @@
 #include "../janela/teclado/Teclado.h"
 #include <stdlib.h>
 #include "../tempo/Setts.h"
+#include <stdbool.h>
 
 void branco(Janela *janela){
     if (!janela || !janela->pixl){return;}
@@ -25,48 +26,73 @@ void branco(Janela *janela){
     }
 }
 
+void destroiInvalido(){//libera memoria dos quadrados transparentes da peça
+    for (int i = 0; i < peca->length; i++) {
+        Posicao *posicao = peca->posicoes[i];
+        if (posicao && !posicao->valido) {
+            free(posicao);
+        }
+    }
+}
+
+void pilha(){
+    for(int i =0;i<9;i++){
+        for(int j=0;j<torre->length;j++){
+            if((peca->posicoes[i]->x == torre->posicoes[j]->x) && 
+            (peca->posicoes[i]->y + 1 == torre->posicoes[j]->y) && peca->posicoes[i]->valido){
+                if(!addPeca(peca, torre)){
+                    fprintf(stderr, "pilha: não foi possível guardar a peça na torre\n");
+                }
+
+                destroiInvalido();
+                peca = new_Peca();
+
+                if(!peca){
+                    fprintf(stderr, "pilha: não foi possível criar nova peça\n");
+                }
+            }
+        }
+    }
+}
 
 
 void gravidade(){
-    if(!peca || !peca->posicoes ||
-       peca->length <= 0 || peca->length > peca->size){
-        printf("a peça está nula, não é possivel aplicar gravidade\n");
+    if (!peca || !peca->posicoes ||
+        peca->length <= 0 || peca->length > peca->size) {
+        printf("a peça está nula, não é possível aplicar gravidade\n");
         return;
     }
 
     int chegou_ao_chao = 0;
-    for(int i=0;i<peca->length;i++){
+    for (int i = 0; i < peca->length; i++) {
         Posicao *posicao = peca->posicoes[i];
-        if(posicao && posicao->valido && posicao->y >= 19){
+        if (posicao && posicao->valido && posicao->y >= 19) {
             chegou_ao_chao = 1;
             break;
         }
     }
 
-    if(chegou_ao_chao){
-        if(!addPeca(peca, torre)){
+    if (chegou_ao_chao) {
+        if (!addPeca(peca, torre)) {
             fprintf(stderr, "gravidade: não foi possível guardar a peça na torre\n");
             return;
         }
 
-        for(int i=0;i<peca->length;i++){
-            Posicao *posicao = peca->posicoes[i];
-            if(posicao && !posicao->valido){
-                free(posicao);
-            }
-        
-        }
+        destroiInvalido();
+
         delListaPosicao(peca);
         peca = new_Peca();
-        if(!peca){
+        if (!peca) {
             fprintf(stderr, "gravidade: peça guardada, mas não foi possível criar a próxima\n");
         }
         return;
     }
 
-    
-    for(int i=0;i<peca->length;i++){
-        if(peca->posicoes[i]){
+
+    pilha();
+
+    for (int i = 0; i < peca->length; i++) {
+        if (peca->posicoes[i]) {
             peca->posicoes[i]->y++;
         }
     }
@@ -87,10 +113,24 @@ static int colParede(int deslocamento){
     return 0;
 }
 
+static  bool colisao(int n){//verifica colisão da peça com as posições da torre
+    for(int i=0;i<9;i++){
+        for(int j=0;j<torre->length;j++){
+            if((peca->posicoes[i]->x + n == torre->posicoes[j]->x)&&(peca->posicoes[i]->y == torre->posicoes[j]->y)
+             && peca->posicoes[i]->valido){
+                return true;
+            }
+        }
+    }
+
+    return false;
+}
+
+
 void direita(){
     if(!peca){return;}
 
-    if(colParede(1)){return;}
+    if(colParede(1) || colisao(1)){return;}
 
     for(int i=0;i<9;i++){
         peca->posicoes[i]->x++;
@@ -100,7 +140,9 @@ void direita(){
 }
 void esquerda(){
     if(!peca){return;}
-    if(colParede(-1)){return;}
+
+    if(colParede(-1) || colisao(-1)){return;}
+
     for(int i=0;i<9;i++){
         peca->posicoes[i]->x--;
     }

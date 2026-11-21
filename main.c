@@ -11,6 +11,8 @@ int tamanho = 15;
 int QA= 10 * 20;//quantidade de quandrados em tela(quantidade calculada manualmente)
 
 
+
+
 int main(){
 
     /*primeiro abre a janela*/
@@ -18,7 +20,7 @@ int main(){
 
     padrao = ((janela->novoHeight / 20)); //* 3) / 10; //calcula o tamanho do padrão
 
-    sWayland *wayland = new_Wayland(); 
+    sWayland *wayland = new_Wayland();
     new_Nos(janela, wayland);
 
 
@@ -73,3 +75,5 @@ int main(){
     
     return 0;
 }
+
+
