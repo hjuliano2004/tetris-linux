@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include "../tempo/Setts.h"
 #include <stdbool.h>
-#include "../cenario/Cenario.h"
+
 
 void branco(Janela *janela){
     if (!janela || !janela->pixl){return;}
@@ -55,7 +55,6 @@ void pilha(){
                 }
                 linhaFechada();
                 return;
-
             }
         }
     }
@@ -177,25 +176,128 @@ void rapido(SetTimer *time){
         action = ACTION_NONE;
     }
 
-void rotacao(){
+ListaPosicao *rotacao(ListaPosicao *pec){
 
-    if(!peca || !peca->posicoes){
+    if(!pec || !pec->posicoes){
         printf("não é possivel girar peça nula\n");
-        return;
+        return NULL;
     }
 
     int p[9];
 
-    p[0] = peca->posicoes[6]->valido;   p[1] = peca->posicoes[3]->valido;   p[2] = peca->posicoes[0]->valido;
-    p[3] = peca->posicoes[7]->valido;   p[4] = peca->posicoes[4]->valido;   p[5] = peca->posicoes[1]->valido;
-    p[6] = peca->posicoes[8]->valido;   p[7] = peca->posicoes[5]->valido;   p[8] = peca->posicoes[2]->valido;
+    p[0] = pec->posicoes[6]->valido;   p[1] = pec->posicoes[3]->valido;   p[2] = pec->posicoes[0]->valido;
+    p[3] = pec->posicoes[7]->valido;   p[4] = pec->posicoes[4]->valido;   p[5] = pec->posicoes[1]->valido;
+    p[6] = pec->posicoes[8]->valido;   p[7] = pec->posicoes[5]->valido;   p[8] = pec->posicoes[2]->valido;
 
     for(int i=0;i<9;i++){
-       peca->posicoes[i]->valido = p[i];
+       pec->posicoes[i]->valido = p[i];
     }
 
     action = ACTION_NONE;
+
+    return pec;
 }
+
+static ListaPosicao *clonar(){
+    if(!peca || !peca->posicoes){
+        printf("clonar: não é possivel clonar peça nula\n");
+        return NULL;
+    }
+
+    ListaPosicao *clone = new_ListaPosicao(9);
+    if(!clone || !clone->posicoes){
+        printf("clonar: não foi possível criar clone\n");
+        return NULL;
+    }
+
+    for(int i=0;i<9;i++){
+        Posicao *orig = peca->posicoes[i];
+        if(!orig){
+            printf("clonar: posição de peça nula\n");
+            for(int j=0;j<clone->length;j++){
+                free(clone->posicoes[j]);
+            }
+            delListaPosicao(clone);
+            return NULL;
+        }
+
+        Posicao *p = new_Posicao(orig->x, orig->y);
+        if(!p){
+            for(int j=0;j<clone->length;j++){
+                free(clone->posicoes[j]);
+            }
+            delListaPosicao(clone);
+            return NULL;
+        }
+        p->valido = orig->valido;
+        addPosicao(clone, p);
+    }
+
+    return clone;
+}
+
+static bool teste(ListaPosicao *clone, Posicao posicao){
+
+    bool colide = false;
+
+    for(int i=0;i<9;i++){
+        for(int j=0;j<torre->length;j++){
+
+            int x = clone->posicoes[i]->x + posicao.x;
+            int y = clone->posicoes[i]->y + posicao.y;
+            int valido = clone->posicoes[i]->valido;
+
+            if((x == torre->posicoes[j]->x)&&(y == torre->posicoes[j]->y) && valido){
+                colide = true;
+            }
+            if(x < 0 || x > 9 || y > 19){
+                colide = true;
+            }
+        }
+    }
+
+    return colide;
+}
+
+void rotacaoPeca(){
+    if(!peca || !peca->posicoes){return;}
+
+    ListaPosicao *clone = rotacao(clonar());
+
+    if(!clone || !clone->posicoes){return;}
+
+    Posicao init[] = {{.x = 0, .y = 0, .valido = 1},{.x = 1, .y = 0, .valido = 1},{.x = -1, .y = 0, .valido = 1},
+    {.x = 0, .y = -1, .valido = 1},{.x = -2, .y = 0, .valido = 1},
+    {.x = 2, .y = 0, .valido = 1},{.x = -1, .y = -1, .valido = 1},
+    {.x = -2, .y = -1, .valido = 1},{.x = -2, .y = -2, .valido = 1},
+    {.x = 2, .y = 1, .valido = 1},{.x = 2, .y = 2, .valido = 1}};
+
+    int length = sizeof(init) / sizeof(init[0]);
+
+
+    for(int i=0;i<length;i++){
+        bool colide = teste(clone, init[i]);
+
+        if(!colide){
+            for(int j=0;j<9;j++){
+                peca->posicoes[j]->x = (clone->posicoes[j]->x += init[i].x);
+                peca->posicoes[j]->y = (clone->posicoes[j]->y += init[i].y);
+                peca->posicoes[j]->valido = clone->posicoes[j]->valido;
+            }
+            break;
+        }
+    }
+
+    for(int i=0;i<clone->length;i++){
+        free(clone->posicoes[i]);
+    }
+    delListaPosicao(clone);
+}
+
+    
+    
+
+
 
 static void passar(int n)
 {
@@ -206,21 +308,6 @@ static void passar(int n)
         }
     }
 }
-
-
-static bool colideEspera(Posicao **posicoes, int length){
-
-    for(int i=0;i<length;i++){
-        for(int j=0; j<torre->length;j++){
-            if(posicoes[i]->y + 1 == torre->posicoes[j]->y || posicoes[i]->y + 1 == 19){
-                return true;
-            }
-        }
-    }
-
-    return false;
-}
-
 
 
 void linhaFechada(void)
@@ -271,3 +358,7 @@ void linhaFechada(void)
         posicao->y += linhasRemovidasAbaixo;
     }
 }
+
+
+
+

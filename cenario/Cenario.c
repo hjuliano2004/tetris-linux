@@ -94,10 +94,6 @@ ListaPosicao *new_ListaPosicao(int numero){
 
 ListaPosicao *new_Peca(){
 
-    if(peca){
-        delListaPosicao(peca);
-    }
-
     int *modelo_peca = modelo();
     if(!modelo_peca){
         printf("não foi possivel reservar memoria para copiar o modelo da peça\n");
@@ -132,6 +128,7 @@ ListaPosicao *new_Peca(){
 
 ListaPosicao *delListaPosicao(ListaPosicao *lista){
     if (lista){
+
         free(lista->posicoes);
         free(lista);
     }

@@ -58,7 +58,8 @@ int main(){
             vNormal(timer);
             break;
         case ACTION_ROTATE:
-            rotacao();
+            //rotacao(peca);
+            rotacaoPeca();
             break;
         case OUT:
             janela->aberto = false;
