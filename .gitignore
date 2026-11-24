@@ -1,0 +1,19 @@
+# Objetos e bibliotecas
+*.o
+*.obj
+*.a
+*.so
+*.so.*
+*.dylib
+*.lib
+
+# Executáveis
+*.exe
+*.dll
+*.out
+*.bin
+
+# Binários sem extensão (Linux)
+# Adicione aqui os nomes dos seus executáveis, ex:
+# ./build/*
+# ./bin/*   

@@ -71,6 +71,11 @@ void keyboard_key(void *data, struct wl_keyboard *keyboard, uint32_t serial, uin
         action = OUT;
             break;
 
+        case XKB_KEY_p:
+        case XKB_KEY_P:
+        action = ACTION_PAUSE;
+            break;
+
         default:
         action = ACTION_NONE;
             break;

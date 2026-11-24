@@ -19,6 +19,7 @@ typedef enum {
     ACTION_ROTATE,
     ACTION_FAST,
     ACTION_NORMAL,
+    ACTION_PAUSE,
     OUT
 } Action;
 

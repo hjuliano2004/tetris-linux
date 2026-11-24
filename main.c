@@ -6,6 +6,7 @@
 #include <time.h>
 #include "tempo/Setts.h"
 #include <stddef.h>
+#include <stdbool.h>
 
 int tamanho = 15;
 int QA= 10 * 20;//quantidade de quandrados em tela(quantidade calculada manualmente)
@@ -34,12 +35,35 @@ int main(){
 
     SetTimer *timer = setInterval(gravidade, 0, 0.5);
 
+    bool pause = false;
+
     while(janela->aberto){
         wl_display_dispatch(wayland->display);
         //branco(janela);
         if (janela->buffer && janela->buffer_liberado && janela->frame_pronto) {
             janela->redraw_requested = 1;
             attJanela(janela->nos);
+        }
+
+        if(action == ACTION_PAUSE){
+            
+        }
+
+        switch (action){
+        case ACTION_PAUSE:
+            pause = !pause;
+            action = ACTION_NONE;
+            break;
+        case OUT:
+            janela->aberto = false;
+        break;
+        
+        default:
+            break;
+        }
+
+        if(pause){
+            continue;
         }
 
         switch (action){
@@ -58,12 +82,8 @@ int main(){
             vNormal(timer);
             break;
         case ACTION_ROTATE:
-            //rotacao(peca);
             rotacaoPeca();
             break;
-        case OUT:
-            janela->aberto = false;
-        break;
         }
 
 
