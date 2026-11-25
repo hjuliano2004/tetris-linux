@@ -5,7 +5,13 @@
 #include <stdlib.h>
 #include "../tempo/Setts.h"
 #include <stdbool.h>
+#include "../cenario/modelos/Modelos.h"
+#include "pixelFont/Escrita.h"
+#include <string.h>
+#include "string/String.h"
+#include <limits.h>
 
+int pontuacao = 0;
 
 void branco(Janela *janela){
     if (!janela || !janela->pixl){return;}
@@ -25,6 +31,22 @@ void branco(Janela *janela){
         }
 
     }
+
+   
+
+    char str[CHAR_BIT * sizeof(int) / 3 + 2];
+
+    sprintf(str, "%d", pontuacao);
+
+
+    String *p = string((char *[]){"Pontos: ", str, NULL});
+
+     int rigth = janela->width - (strlen(p->data) * 10);
+    texto(pixel, p->data, janela->width, janela->height, rigth, padrao, BLACK);
+
+    free(p->data);
+    free(p);
+
 }
 
 void destroiInvalido(){//libera memoria dos quadrados transparentes da peça
@@ -143,6 +165,9 @@ void direita(){
     }
 
     action = ACTION_NONE;
+
+
+    c1 += 3;
 }
 void esquerda(){
     if(!peca){return;}
@@ -154,6 +179,8 @@ void esquerda(){
     }
 
     action = ACTION_NONE;
+
+    c2 = (c2 + 1) * 3;
 }
 
 
@@ -283,6 +310,8 @@ void rotacaoPeca(){
                 peca->posicoes[j]->x = (clone->posicoes[j]->x += init[i].x);
                 peca->posicoes[j]->y = (clone->posicoes[j]->y += init[i].y);
                 peca->posicoes[j]->valido = clone->posicoes[j]->valido;
+
+                c1 += c2 * i;
             }
             break;
         }
@@ -331,6 +360,7 @@ void linhaFechada(void)
     for (int y = 0; y < 20; y++) {
         if (vertical[y] == 10) {
             linhaRemovida[y] = true;
+            pontuacao += 10;
         }
     }
 

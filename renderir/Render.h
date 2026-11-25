@@ -4,6 +4,7 @@
 #include "../tempo/Setts.h"
 #include "../cenario/Cenario.h"
 
+extern int pontuacao;
 void branco(Janela *janela);
 void gravidade();
 void esquerda();

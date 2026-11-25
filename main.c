@@ -7,6 +7,7 @@
 #include "tempo/Setts.h"
 #include <stddef.h>
 #include <stdbool.h>
+#include "cenario/modelos/Modelos.h"
 
 int tamanho = 15;
 int QA= 10 * 20;//quantidade de quandrados em tela(quantidade calculada manualmente)
@@ -37,6 +38,8 @@ int main(){
 
     bool pause = false;
 
+    
+
     while(janela->aberto){
         wl_display_dispatch(wayland->display);
         //branco(janela);
@@ -45,14 +48,18 @@ int main(){
             attJanela(janela->nos);
         }
 
-        if(action == ACTION_PAUSE){
-            
-        }
-
         switch (action){
         case ACTION_PAUSE:
             pause = !pause;
             action = ACTION_NONE;
+            
+
+            if(pause){
+                c1 = c1 + c1 * 2;
+            }else{
+                c2 = c1 / 2;
+            }
+
             break;
         case OUT:
             janela->aberto = false;
@@ -84,6 +91,10 @@ int main(){
         case ACTION_ROTATE:
             rotacaoPeca();
             break;
+        
+        case ACTION_PAUSE:
+        case OUT:
+        break;
         }
 
 

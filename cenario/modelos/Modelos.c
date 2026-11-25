@@ -28,9 +28,16 @@ int ese[] = {0, 0, 0,
 
 int *pecas[] =  {barra, engr, blk, eze, ese};
 
+
+unsigned int c1 = 0;
+unsigned int c2 = 0;
+
 static int sorteio(void) {
     int quantidade = sizeof pecas / sizeof pecas[0];
-    return rand() % quantidade;
+
+    unsigned int aleatorio = rand();
+    aleatorio = (aleatorio * c1 + c2) % quantidade;
+    return aleatorio;
 }
 
 
